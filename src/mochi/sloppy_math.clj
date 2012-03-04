@@ -5,7 +5,7 @@
   (if (empty? xs) [-1 Double/NEGATIVE_INFINITY]
       (apply max-key (comp max second) (cc.seq-utils/indexed xs))))
 
-(def *log-thresh* 30.0)
+(def ^:dynamic *log-thresh* 30.0)
 
 (defn log-add [xs]
   (let [[arg-max max] (my-max xs) thresh (- max *log-thresh*)]
