@@ -28,9 +28,9 @@
 
 (def default-feat-distr
   (reify
-    distr/IDistribution
-    (prob [this e] 1.0e-20)))
-  
+   distr/IDistribution
+   (log-prob [this e] 1.0e-20)))
+
 (defn all-labels [params] (distr/support (.labelPrior params)))
 
 (defn feat-distr [params label]
