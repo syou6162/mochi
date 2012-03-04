@@ -12,7 +12,6 @@
   (merge-stats [this other] "merge sufficient statistics")
   (to-distribution [this] "make an IDistribution from suff stats"))
 
-
 (defn obs-all 
   "(obs-all suff-stats :a 1.0 :b 2.0)"
   [suff-stats & kvs]
@@ -31,7 +30,7 @@
   "Distribution Abstraction, many have default implementations
    in default-distr-impl"
   (events [this] "seq of [event prob] pairs") 
-  (prob [this  e] "probability of event e")
+  (prob [this e] "probability of event e")
   (log-prob [this e] "log prob of event")
   (mode [this] "mode of distribution")
   (sample [this rand] [this] "sample distribution")
@@ -58,12 +57,12 @@
 		    (if (and (>= x start) (<= x stop)) e
 			(recur stop (rest probs)))))))))})
 
-(extend  clojure.lang.IPersistentMap
+(extend clojure.lang.IPersistentMap
   IDistribution
   (into default-distr-impl
-   { :prob (fn [this e] (get this e 0.0))} ))
+	{ :prob (fn [this e] (get this e 0.0))} ))
 
-(extend  mochi.counter.Counter
+(extend mochi.counter.Counter
   IDistribution
   (into default-distr-impl
 	{ :prob (fn [this e]
@@ -86,16 +85,15 @@
            (apply str))))
 
   clojure.lang.Seqable
-  (seq  [this] (events this))
+  (seq [this] (events this))
 
   clojure.lang.IFn
-  (invoke  [this e] (prob this e))
-
+  (invoke [this e] (prob this e))
+  
   clojure.lang.IPersistentCollection
 
   clojure.lang.IEditableCollection
   (asTransient [this] (DirichletMultinomial. (transient counts) lambda numKeys))
-
   
   clojure.lang.ITransientCollection
   (persistent [this] (DirichletMultinomial. (persistent! counts) lambda numKeys)))
@@ -143,17 +141,3 @@
   [:counts (cntr/make) :lambda 0.0 :numKeys -1]
   (let [numKeys (if (> numKeys 0) numKeys (count (seq counts)))]
     (DirichletMultinomial. counts lambda numKeys)))
-
-
-;;; Testing ;;;
-(comment    
-  (inc 1)
-  (inc "1")
-  (def d (make-DirichletMultinomial :counts (cntr/make {:a 1.0}) :lambda 1.0))
-  (persistent! (obs (transient d) :a 1.0)) 
-  (def e (make-DirichletMultinomial :counts (cntr/make {:b 2.0}) :lambda 1.0))
-  (def d (merge-stats d e))
-  (log-prob d :a)
-  (obs d :a 2.0) 
-  (mode d)
-)
