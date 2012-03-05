@@ -89,7 +89,7 @@
    (distr/make-DirichletMultinomial :lambda 1.0)
    (group-by label data)))
 
-(defn make-feat-distrs
+(defn- make-feat-distrs
   "returns a map feat => distr"
   [fvs]
   (let [v fvs
