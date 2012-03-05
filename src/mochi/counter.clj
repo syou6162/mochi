@@ -32,7 +32,6 @@
   (inc-count [this k v] (assoc! this k  (+ (get this k 0.0) v)))
   (all-counts [this] this))
 
-
 ; The counter type exists, to
 ; cache the total as well as
 ; add things like IFn support
@@ -115,38 +114,3 @@
 
 (defn find-max [counter]
   (apply max-key second (all-counts counter)))
-
-(comment
-  (def c (make))  
-  (class (.counts c))
-  (transient? c)
-  (transient? (transient c))
-  (transient? c)
-  ;
-	(time
-   (persistent!
-	 (reduce
-	  (fn [counts key] (inc-count counts key 1.0))
-	  (transient (make))
-	  (take 1e5 (repeatedly (constantly :a))))))
-  ;
-	(time
-   (reduce
-    (fn [counts key] (inc-count counts key 1.0))
-    (make)
-    (take 1e5 (repeatedly (constantly :a)))))
-  ;
-  #{ 1 2 }
-  (def c (-> (make) (inc-count :a 1.0) (inc-count :b 2.0)))
-  (all-counts c)
-  (find-max c)
-  (merge-counters c c)
-  (log-normalize (inc-count c :a -1.0)) 
-  (log-scores-to-probs (inc-count c :a -1.0))     
-  (-> (make)
-      (inc-count :a 1.0)
-      (inc-count :b 2.0)
-      (scale 2.0)
-      normalize)      
-  )
-
