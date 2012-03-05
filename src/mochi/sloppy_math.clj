@@ -25,16 +25,3 @@
   (if (> x 7)
     (small-digamma (- x 0.5))
     (- (digamma (inc x)) (/ 1.0 x))))
-
-(comment
-  (Math/exp (log-add [0 0 0 0 0 0]))
-  (digamma 1)
-)	      	      
-	       		  
-		
-		
-	    
-	    
-	  
-
-  
