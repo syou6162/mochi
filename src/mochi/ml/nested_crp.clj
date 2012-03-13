@@ -39,48 +39,29 @@
   [:level 0 :numOfCus 0 :children nil]
   (Node. level numOfCus children))
 
-
-
-
-(def tree (make-Node
-	   :level 0
-	   :numOfCus 2
-	   :children {1 (make-Node
-			 :level 1
-			 :numOfCus 2
-			 :children {3 (make-Node
-				       :level 2
-				       :numOfCus 2
-				       :children nil)})
-		      2 (make-Node
-			 :level 1
-			 :numOfCus 2
-			 :children nil)}))
-
-(defn map-path [node f path]
-  (let [level (:level node)
-	numOfCus (:numOfCus node)
-	children (:children node)]
+(defn- change-cus-num [tree f path make-children-func]
+  (let [level (.level tree)
+	numOfCus (.numOfCus tree)
+	children (.children tree)]
     (if (empty? path)
       (Node. level (f numOfCus) children)
-      (Node. level (f numOfCus) (assoc children
-			  (first path)
-			  (map-path (get children (first path)) f (rest path)))))))
+      (Node. level (f numOfCus) (make-children-func level children path)))))
 
-; (map-path tree inc '[1])
+(defn inc-cus-num [tree path]
+  (letfn [(make-children-func [level children path]
+			      (assoc children
+				(first path)
+				(inc-cus-num (get children (first path)
+						  (Node. (inc level) 0 nil))
+					     (rest path))))]
+    (change-cus-num tree inc path make-children-func)))
 
-
-
-(defn inc-num [tree xs]
-  (let [before (get-in tree xs)
-	level (.level before)
-	children (.children before)
-	after (Node. level (inc (.numOfCus before)) children)]
-    (assoc-in tree xs after)))
-
-(defn dec-num [tree xs]
-  (let [before (get-in tree xs)
-	level (.level before)
-	children (.children before)
-	after (Node. level (dec (.numOfCus before)) children)]
-    (assoc-in tree xs after)))
+(defn dec-cus-num [tree path]
+  (letfn [(make-children-func [level children path]
+			      (if (nil? (get children (first path)))
+				children
+				(assoc children
+				  (first path)
+				  (dec-cus-num (get children (first path))
+					       (rest path)))))]
+    (change-cus-num tree dec path make-children-func)))
