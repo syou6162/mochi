@@ -57,11 +57,15 @@
     (change-cus-num tree inc path make-children-func)))
 
 (defn dec-cus-num [tree path]
-  (letfn [(make-children-func [level children path]
-			      (if (nil? (get children (first path)))
-				children
-				(assoc children
-				  (first path)
-				  (dec-cus-num (get children (first path))
-					       (rest path)))))]
+  (letfn [(my-dissoc [m k] (let [result (dissoc m k)] ;; 空になったらnilを返す
+			     (if (empty? result)
+			       nil
+			       result)))
+	  (make-children-func [level children path]
+			      (cond (nil? (get children (first path))) children
+				    (= (.numOfCus (get children (first path))) 1) (my-dissoc children (first path))
+				    :else (assoc children
+					    (first path)
+					    (dec-cus-num (get children (first path))
+							 (rest path)))))]
     (change-cus-num tree dec path make-children-func)))

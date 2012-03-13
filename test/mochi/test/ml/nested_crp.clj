@@ -105,4 +105,16 @@
 			 2 (crp/make-Node
 			    :level 1
 			    :numOfCus 2
-			    :children nil)})))))
+			    :children nil)}))))
+  (let [tree (crp/make-Node
+	      :level 0
+	      :numOfCus 2
+	      :children {1 (crp/make-Node
+			    :level 1
+			    :numOfCus 1
+			    :children nil)})]
+    (is (= (crp/dec-cus-num tree [1])
+	   (crp/make-Node
+	      :level 0
+	      :numOfCus 1
+	      :children nil)))))
