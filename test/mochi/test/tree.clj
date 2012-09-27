@@ -58,3 +58,27 @@
             ["PP" ["IN" "over"] 
              ["NP" ["DT" "the"] ["JJ" "lazy"] ["NN" "dog"]]]]])
          '("DT" "JJ" "JJ" "NN" "VBD" "IN" "DT" "JJ" "NN"))))
+
+;; 共通の親を持つ中で一番深いレベルにいるものをTreeで返す
+(deftest find-lca-test
+  (is (= (tree/find-lca (tree/add-ids
+                         ["S" ["NP" ["DT" "the"] ["JJ" "quick"] ["JJ" "brown"]
+                               ["NN" "fox"]]	  
+                          ["VP" ["VBD" "jumped"] 
+                           ["PP" ["IN" "over"] 
+                            ["NP" ["DT" "the"] ["JJ" "lazy"] ["NN" "dog"]]]]])
+                        [2 3 0] ; brown
+                        [1 2 0] ; quick
+                        )
+         #mochi.tree.Tree{:_label "NP",
+                          :_children [#mochi.tree.Tree{:_label "DT",
+                                                       :_children [#mochi.tree.Tree{:_label "the", :_children [], :id [0 1 0]}], :id [0 1 1]}
+                                      #mochi.tree.Tree{:_label "JJ", :_children [#mochi.tree.Tree{:_label "quick", :_children [], :id [1 2 0]}],
+                                                       :id [1 2 1]}
+                                      #mochi.tree.Tree{:_label "JJ",
+                                                       :_children [#mochi.tree.Tree{:_label "brown", :_children [], :id [2 3 0]}],
+                                                       :id [2 3 1]}
+                                      #mochi.tree.Tree{:_label "NN",
+                                                       :_children [#mochi.tree.Tree{:_label "fox", :_children [], :id [3 4 0]}],
+                                                       :id [3 4 1]}],
+                          :id [0 4 2]})))
