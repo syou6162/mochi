@@ -1,8 +1,7 @@
 (ns mochi.enhanced-record
   (:require [clojure.contrib.str-utils2 :as str2])
   (:use [clojure.string :only (join)]
-        [clojure.contrib.pprint :only
-          (*simple-dispatch* use-method pprint-map pprint)]))
+        [clojure.pprint]))
 
 ;;;; enhanced records
 
@@ -89,7 +88,7 @@
    specific constructor name."
   [ctor-name]
   (fn [record]
-    (print-record ctor-name record *out* pprint-map)))
+    (print-record ctor-name record *out* #'clojure.pprint/pprint-map)))
 
 ;; public entry point
 
@@ -107,9 +106,10 @@
          ;; define the constructor functions
          (make-record-constructor ~ctor-name
                                   (~(symbol (str type-name "."))
-                                     ~@(repeat (count field-list) nil)))
+                                   ~@(repeat (count field-list) nil)))
          ;; setup printing
          (setup-print-record (quote ~ctor-name) ~type-name)
          ;; setup pprinting
-         (use-method *simple-dispatch* ~type-name
-               (generate-record-pprint (quote ~ctor-name))))))
+         (#'clojure.pprint/use-method
+          simple-dispatch ~type-name
+          (generate-record-pprint (quote ~ctor-name))))))

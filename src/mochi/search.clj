@@ -31,7 +31,8 @@
 
 (defn- generic-search
   ""
-  [#^ISearchProblem search-problem priority-fn]
+  [search-problem priority-fn]
+  ; [#^ISearchProblem search-problem priority-fn]
   (let [pq (doto (pq-new) (.add (init-search-node search-problem)))]	
     #_(swank.core/break)
     (loop [ignore nil]
