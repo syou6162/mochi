@@ -33,8 +33,3 @@
   [& elems] 
   (when elems
     [(apply min elems) (inc (apply max elems))]))
-         
-(comment
-  (start [0 5])
-  (intersect [0 5] [0 3])
-)		      
